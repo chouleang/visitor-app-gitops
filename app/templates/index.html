@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visitor Counter - GitOps Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        .counter { font-size: 3em; color: #2c3e50; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .environment { 
+            padding: 5px 10px; 
+            border-radius: 5px; 
+            color: white; 
+            font-weight: bold;
+        }
+        .production { background-color: #e74c3c; }
+        .staging { background-color: #f39c12; }
+        .development { background-color: #27ae60; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to our GitOps Demo!</h1>
+        <div class="environment {{ environment }}">{{ environment.upper() }}</div>
+        <p>This page has been visited</p>
+        <div class="counter">{{ count }}</div>
+        <p>times</p>
+        <p><small>Pod: {{ hostname }}</small></p>
+        <p><small>Deployed with GitOps on GKE</small></p>
+    </div>
+</body>
+</html>

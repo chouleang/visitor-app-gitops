@@ -1,0 +1,63 @@
+name: Build and Test Application
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        cd app
+        pip install -r requirements.txt
+
+    - name: Run tests
+      run: |
+        cd app
+        python -c "import flask; import redis; print('Dependencies imported successfully')"
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: ./app
+        push: true
+        tags: |
+          ${{ secrets.DOCKER_USERNAME }}/visitor-app:latest
+          ${{ secrets.DOCKER_USERNAME }}/visitor-app:${{ github.sha }}
+        cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/visitor-app:buildcache
+        cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/visitor-app:buildcache,mode=max
+
+    - name: Update image tag in manifests
+      run: |
+        sed -i 's|YOUR_DOCKER_USERNAME/visitor-app:latest|${{ secrets.DOCKER_USERNAME }}/visitor-app:${{ github.sha }}|g' k8s/base/deployment.yaml
+      shell: bash
+
+    - name: Commit updated manifests
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add k8s/base/deployment.yaml
+        git diff --staged --quiet || git commit -m "Update image tag to ${{ github.sha }}"
+        git push

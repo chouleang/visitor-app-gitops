@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: visitor-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: visitor-app
+  template:
+    metadata:
+      labels:
+        app: visitor-app
+    spec:
+      containers:
+      - name: visitor-app
+        image: chouleang/visitor-app:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: visitor-config
+              key: redis-host
+        - name: REDIS_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: visitor-config
+              key: redis-port
+        - name: ENVIRONMENT
+          value: "base"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5

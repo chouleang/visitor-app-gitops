@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-visitor-app
+  labels:
+    grafana_dashboard: "1"
+data:
+  visitor-app-dashboard.json: |
+    {
+      "dashboard": {
+        "title": "Visitor App Dashboard",
+        "panels": [...],
+        "tags": ["gitops", "visitor-app"]
+      }
+    }
