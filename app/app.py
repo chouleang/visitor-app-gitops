@@ -2,6 +2,7 @@ from flask import Flask, render_template
 import redis
 import os
 import socket
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 
 app = Flask(__name__)
 redis_host = os.getenv('REDIS_HOST', 'redis-service')

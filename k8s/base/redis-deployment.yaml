@@ -27,17 +27,20 @@ spec:
         volumeMounts:
         - name: redis-data
           mountPath: /data
+      - name: redis-exporter  # ← ADD REDIS EXPORTER
+        image: oliver006/redis_exporter:latest
+        ports:
+        - containerPort: 9121
+        env:
+        - name: REDIS_ADDR
+          value: "redis://localhost:6379"
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "10m"
+          limits:
+            memory: "64Mi"
+            cpu: "50m"
       volumes:
       - name: redis-data
         emptyDir: {}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis-service
-spec:
-  selector:
-    app: redis
-  ports:
-  - port: 6379
-    targetPort: 6379
