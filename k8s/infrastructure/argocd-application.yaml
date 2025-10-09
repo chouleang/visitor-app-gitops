@@ -9,7 +9,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/your-username/visitor-app-gitops
+    repoURL: https://github.com/chouleang/visitor-app-gitops
     targetRevision: HEAD
     path: k8s/overlays/production
   destination:
@@ -35,7 +35,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/your-username/visitor-app-gitops
+    repoURL: https://github.com/chouleang/visitor-app-gitops
     targetRevision: HEAD
     path: k8s/overlays/staging
   destination:
