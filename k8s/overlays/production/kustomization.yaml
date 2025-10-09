@@ -8,7 +8,7 @@ namespace: visitor-app
 
 replicas:
 - name: visitor-app
-  count: 3
+  count: 5
 
 images:
 - name: YOUR_DOCKER_USERNAME/visitor-app
