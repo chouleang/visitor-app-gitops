@@ -4,8 +4,12 @@ kind: Kustomization
 namespace: monitoring
 
 resources:
+- namespace.yaml
 - prometheus-stack.yaml
-- service-monitors.yaml
+- grafana.yaml
 
-commonLabels:
-  app: prometheus-stack
+labels:
+- includeSelectors: true
+- includeTemplates: true
+  pairs:
+    app: monitoring
